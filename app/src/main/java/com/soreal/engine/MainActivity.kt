@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
-class MainActivity : Activity {
+class MainActivity : Activity() {
     private lateinit var engineView:SorealEngineView
     override fun onCreate(savedInstanceState:Bundle?){
         super.onCreate(savedInstanceState)
