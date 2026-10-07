@@ -7,34 +7,16 @@ namespace soreal {
 VulkanCapabilities queryVulkanCapabilities() {
     VulkanCapabilities result{};
 
-    // Android's system Vulkan loader does not guarantee that
-    // vkEnumerateInstanceVersion is exported as a link-time symbol.
-    // Resolve it through the loader instead, falling back to Vulkan 1.0.
-    uint32_t version = VK_API_VERSION_1_0;
-    auto getInstanceProcAddr = vkGetInstanceProcAddr;
-    if (!getInstanceProcAddr) {
-        return result;
-    }
-
-    using EnumerateInstanceVersionFn = VkResult (*)(uint32_t*);
-    auto enumerateInstanceVersion =
-        reinterpret_cast<EnumerateInstanceVersionFn>(
-            getInstanceProcAddr(nullptr, "vkEnumerateInstanceVersion"));
-
-    if (enumerateInstanceVersion) {
-        if (enumerateInstanceVersion(&version) != VK_SUCCESS) {
-            version = VK_API_VERSION_1_0;
-        }
-    }
-
+    // Keep the first mobile build independent of optional Vulkan 1.1+
+    // loader entry points. Vulkan 1.0 is the safe baseline on Android.
     result.supported = true;
-    result.apiMajor = VK_VERSION_MAJOR(version);
-    result.apiMinor = VK_VERSION_MINOR(version);
+    result.apiMajor = 1;
+    result.apiMinor = 0;
 
     __android_log_print(
         ANDROID_LOG_INFO,
         "SorealVulkan",
-        "Vulkan detected: %d.%d",
+        "Vulkan baseline detected: %d.%d",
         result.apiMajor,
         result.apiMinor);
 
