@@ -4,14 +4,13 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.Gravity
-import android.view.View
 import android.widget.LinearLayout
+import android.widget.Space
 import android.widget.TextView
 
 class SorealEditorOverlay(context: Context) : LinearLayout(context) {
     private val accent = Color.rgb(210, 220, 235)
     private val panel = Color.argb(225, 22, 25, 32)
-    private val muted = Color.rgb(150, 158, 172)
 
     init {
         orientation = VERTICAL
@@ -31,8 +30,7 @@ class SorealEditorOverlay(context: Context) : LinearLayout(context) {
         top.addView(iconButton("⋮", "More"))
         addView(top, LayoutParams(-1, dp(42)).apply { bottomMargin = dp(6) })
 
-        val spacer = Space(context)
-        addView(spacer, LayoutParams(-1, 0, 1f))
+        addView(Space(context), LayoutParams(-1, 0, 1f))
 
         val bottom = LinearLayout(context).apply {
             gravity = Gravity.CENTER
@@ -40,9 +38,12 @@ class SorealEditorOverlay(context: Context) : LinearLayout(context) {
             background = rounded(panel, 16)
         }
         val tools = listOf("Select", "Move", "Rotate", "Scale", "Animate", "Physics")
+        val symbols = listOf("•", "↕", "⟳", "□", "◆", "◈")
         tools.forEachIndexed { i, name ->
-            val b = iconButton(listOf("•", "↕", "⟳", "□", "◆", "◈")[i], name)
-            bottom.addView(b, LayoutParams(0, dp(52), 1f))
+            bottom.addView(
+                iconButton(symbols[i], name),
+                LayoutParams(0, dp(52), 1f)
+            )
         }
         addView(bottom, LayoutParams(-1, dp(60)))
     }
