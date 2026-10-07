@@ -18,10 +18,9 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
-      - name: Set up Gradle 9.5
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: "9.5"
+      - name: Prepare Gradle 9.5 wrapper
+        run: |
+          gradle wrapper --gradle-version 9.5 --distribution-type bin
       - name: Locate Android SDK tools
         run: |
           echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
@@ -35,7 +34,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          gradle :app:assembleDebug --stacktrace --info --no-daemon 2>&1 | tee build.log
+          ./gradlew :app:assembleDebug --stacktrace --info --no-daemon 2>&1 | tee build.log
           status=${PIPESTATUS[0]}
           echo "### Gradle build error summary" >> "$GITHUB_STEP_SUMMARY"
           grep -E "e: |error:|FAILURE:|What went wrong|Execution failed" build.log | tail -n 100 >> "$GITHUB_STEP_SUMMARY" || true
