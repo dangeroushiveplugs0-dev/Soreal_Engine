@@ -16,7 +16,14 @@ static void rotateX(float*m,float a){identity(m);float c=cosf(a),s=sinf(a);m[5]=
 static void rotateY(float*m,float a){identity(m);float c=cosf(a),s=sinf(a);m[0]=c;m[2]=-s;m[8]=s;m[10]=c;}
 void Renderer::initialize(){glDisable(GL_DITHER);glEnable(GL_DEPTH_TEST);program_=makeProgram();uMvp_=glGetUniformLocation(program_,"uMvp");__android_log_print(ANDROID_LOG_INFO,"SorealRenderer","Grid renderer initialized");}
 void Renderer::resize(int w,int h){width_=w>0?w:1;height_=h>0?h:1;glViewport(0,0,width_,height_);}
-void Renderer::touch(float dx,float dy){yaw_+=dx*0.008f;pitch_+=dy*0.006f;if(pitch_>1.35f)pitch_=1.35f;if(pitch_<-1.35f)pitch_=-1.35f;}
+void Renderer::touch(float dx,float dy){
+    constexpr float yawSensitivity=0.0045f;
+    constexpr float pitchSensitivity=0.0035f;
+    yaw_+=dx*yawSensitivity;
+    pitch_+=dy*pitchSensitivity;
+    if(pitch_>1.15f)pitch_=1.15f;
+    if(pitch_<-1.15f)pitch_=-1.15f;
+}
 void Renderer::frame(){glClearColor(.035f,.04f,.055f,1.f);glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);if(!program_)return;
 std::vector<float> v; const int n=20; const float step=0.5f; const float extent=n*step;
 for(int i=-n;i<=n;i++){float a=i*step;v.insert(v.end(),{a,0,-extent,a,0,extent,-extent,0,a,extent,0,a});}
