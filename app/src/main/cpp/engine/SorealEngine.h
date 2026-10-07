@@ -1,2 +1,10 @@
 #pragma once
-namespace soreal{class SorealEngine{public:void initialize();void resize(int width,int height);void frame();};}
+namespace soreal {
+class SorealEngine {
+public:
+    void initialize();
+    void resize(int width, int height);
+    void frame();
+    void touch(float dx, float dy);
+};
+}
