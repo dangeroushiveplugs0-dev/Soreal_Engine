@@ -18,6 +18,10 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
+      - name: Set up Gradle 9.5
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "9.5"
       - name: Locate Android SDK tools
         run: |
           echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
