@@ -28,8 +28,27 @@ jobs:
           yes | sdkmanager --licenses >/dev/null || true
           sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0" "cmake;3.31.6" "ndk;27.2.12479018"
       - name: Build debug APK
-        run: gradle :app:assembleDebug --stacktrace
-      - uses: actions/upload-artifact@v4
+        shell: bash
+        run: |
+          set +e
+          gradle :app:assembleDebug --stacktrace --info --no-daemon 2>&1 | tee build.log
+          status=${PIPESTATUS[0]}
+          echo "### Gradle build error summary" >> "$GITHUB_STEP_SUMMARY"
+          grep -E "e: |error:|FAILURE:|What went wrong|Execution failed" build.log | tail -n 100 >> "$GITHUB_STEP_SUMMARY" || true
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Last 120 log lines" >> "$GITHUB_STEP_SUMMARY"
+          tail -n 120 build.log >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: soreal-build-log
+          path: build.log
+          if-no-files-found: error
+      - name: Upload APK
+        if: success()
+        uses: actions/upload-artifact@v4
         with:
           name: soreal-engine-debug
           path: app/build/outputs/apk/debug/app-debug.apk
